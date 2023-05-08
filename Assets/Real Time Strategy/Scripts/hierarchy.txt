@@ -1,0 +1,5 @@
+player can have multiple bases, but should always have one active base, else eliminated, 
+last one player ==> game over
+
+each base can spawn constrained no of building in it according to base size, etc fns will build later
+each building its corresponding attack unit or it could be simply a farming unit for upgrade points

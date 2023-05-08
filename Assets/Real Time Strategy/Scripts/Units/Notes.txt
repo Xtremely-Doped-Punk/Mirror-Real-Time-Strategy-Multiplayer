@@ -1,0 +1,153 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+When should use Readonly and Get only properties:
+https://stackoverflow.com/questions/2719699/when-should-use-readonly-and-get-only-properties
+
+Creating a property with only a getter makes your property read-only for any code that is outside the class.
+
+You can however change the value using methods provided by your class :
+
+public class FuelConsumption {
+    private double fuel;
+    public double Fuel
+    {
+        get { return this.fuel; }
+    }
+    public void FillFuelTank(double amount)
+    {
+        this.fuel += amount;
+    }
+}
+
+public static void Main()
+{
+    FuelConsumption f = new FuelConsumption();
+
+    double a;
+    a = f.Fuel; // Will work
+    f.Fuel = a; // Does not compile
+
+    f.FillFuelTank(10); // Value is changed from the method's code
+}
+
+- Setting the private field of your class as readonly allows you to set the field value only in the constructor of the class (using an inline assignment or a defined constructor method). You will not be able to change it later.
+
+public class ReadOnlyFields {
+    private readonly double a = 2.0;
+    private readonly double b;
+
+    public ReadOnlyFields()
+    {
+        this.b = 4.0;
+    }
+}
+
+- readonly class fields are often used for variables that are initialized during class construction, and will never be changed later on.
+- In short, if you need to ensure your property value will never be changed from the outside, but you need to be able to change it from inside your class code, use a "Get-only" property.
+- If you need to store a value which will never change once its initial value has been set, use a readonly field.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+AddForce vs Velocity:
+https://www.monkeykidgc.com/2021/01/unity-rigidbody-addforce.html
+Conversely, we could just add velocity by stating Rigidbody.velocity = newVelocity. So, why even have AddForce? The difference between Rigidbody.AddForce and Rigidbody.velocity is how Unity performs the calculations for applying the physics. AddForce takes into account the GameObjects mass when simulating the physics of adding the velocity.
+
+For example, imagine you are working on a game where you are shooting objects and need the objects to respond to the impact of the projectiles or explosions. If you add velocity to everything impacted by the projectile or shockwave, then a pebble will respond the same way a bus will and that would appear strange to the player. Now, if you use AddForce instead, then when the velocity is applied to the pebble it will move much further than something the size/weight of the bus.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Parenting over a network?
+https://forum.unity.com/threads/parenting-over-a-network.513229/#post-4669781
+Note that Unet doesn't actually support GameObjects with a NetworkIdentity component as children of another object. Objects with a NetworkIdentity component are supposed to be at the root of the scene, or you will get unexpected behavior. Also Unet was deprecated a year ago and hasn't received significant updates or bugfixes in several years. Unless your game is all but complete by now, you should switch to another API.
+
+https://stackoverflow.com/questions/37378753/unity-multiplayer-client-does-not-properly-set-a-parent-for-spawned-object
+https://www.youtube.com/watch?v=6OGAv4HW7J8
+
+https://stackoverflow.com/questions/31359668/unity-5-1-networking-spawn-an-object-as-a-child-for-the-host-and-all-clients
+We do a similar thing in our multiplayer game. There are a few things you need to do to get this working. Firstly, the concept:
+
+Setting the weapon's parent on the server is trivial, as you have found. Simply set the transform's parent as you would normally in Unity. However, after spawning this object on the server with NetworkServer.Spawn, it will later be spawned on clients in the root of the scene (hierarchy outside of the spawned prefab is not synchronised).
+
+So in order to adjust the hierarchy on the client I would suggest that you:
+- Use a SyncVar to synchronise the netID of the parent object between the server and client.
+- When the object is spawned on the client, find the parent using the synchronised netID and set it as your transform's parent.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+When to use 'delegate', 'event' or 'Action' ?
+https://answers.unity.com/questions/1739085/when-to-decide-between-using-a-delegate-event-or-a.html
+
+A delegate is a type that can contain any method of the same compatible type. Delegates are used to define callback methods and implement event handling. Any method from any accessible class or struct that matches the delegate type can be assigned to the delegate. Example:
+
+ public delegate int Calculate(int x, int y);
+An example method that can be assigned to this delegate:
+
+ public int Minus(int x, int y)
+ {
+     return x - y;
+ }
+An action is a premade delegate you can use without the need of making a custom one. Action by itself has no parameters, but you can have those with the generic Action<T> version
+
+Examples:
+
+ Action sayHello = () => { Debug.Log("Hello"); };
+ sayHello();
+ Action<string> print  = (a) => { Debug.Log(a); };
+ print("abc");
+Usage:
+
+You can pass these to your own methods as parameter
+
+ public void FindAndExecute(int number, Action toBeExecuted)
+ {
+      //search list for number, and execute the toBeExecuted method
+ }
+ // If 5 is in list, then player will die.. idk..
+ FindAndExecute(5, () => { Player.Alive = false; });
+You also have a few other premade delegates such as Func, which is the same as Action but with a return type like so:
+
+ Func<string> getValue = () => { return "value"; };
+ Func<string, bool> isValue = (a) => { return a == "value"; };
+I often use Func as a custom criteria parameter to some methods that retrieve data.
+
+Events are also of the delegate type, which use the observer type pattern. It allows a subscriber to register a method to an event, and be notified when the event is invoked.
+
+Examples:
+
+ public event EventHandler PlayerJoinedLobby;
+ 
+ public void JoinLobby()
+ {
+     PlayerJoinedLobby?.Invoke(); //Any subscriber is now notified that a player joined the lobby (method is executed on all subscribed objects)
+ }
+ // Any class can subscribe to this event like:
+ className.PlayerJoinedLobby += method;
+ 
+ // Unsubscribe:
+ className.PlayerJoinedLobby -= method;
+Can be used to notify many listeners at once for a method to be executed. Why use events? It keeps your classes decoupled, (single purpose classes) which makes for more robust and clean code, and your subscribers won't affect the other class in anyway as they are independent on the behaviour of their subscribers.
+
+All these topics are quite well explained on the microsoft docs, it is worth to check them out.
+
+https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/delegates/ https://docs.microsoft.com/en-us/dotnet/api/system.action?view=netcore-3.1 https://docs.microsoft.com/en-us/dotnet/standard/events/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UnitSpawner, UnitBehaviour reason why?...
+
+also for script references, it is best to assign in serialized field, rather than GetComponent basis, 
+as when these objects are instanciated in the game, the gameobject is created in the way the scripts are organized,
+
+so if the inspector of gameobject this components in this resp order: {transform, collider, script1, script2, script3}
+
+and say if script1 wants references of script2, script3 references, GetComponent in Start() will return null as at that particular time
+when this script1's Start() is called script2, script3 components might not have been existing as the game engine is yet create it into the gameobject
+just like the hierarchial rendering pipeline one on top of other object in the scene...
+
+this might work in case of script3 getting references of script2, script1 components in Start() as by the time script3 in created into the gameobject
+script2, script1 components would have initialized.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Editor Scripting Notes:
+https://answers.unity.com/questions/360901/editor-timeline-create-his-personnal-gui-timeline-.html?childToView=360910#answer-360910
+https://learn.unity.com/tutorial/editor-scripting
