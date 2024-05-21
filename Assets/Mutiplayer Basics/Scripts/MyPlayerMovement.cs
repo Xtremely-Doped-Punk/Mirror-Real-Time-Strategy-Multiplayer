@@ -1,6 +1,4 @@
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -24,7 +22,8 @@ namespace MultiplayerBasis
             // as this funtion is now runnable by alll the clients,
             // we need to check for if the client trying to acces this methodology has the authority to run it ot not
             // i.e., only the owner-client of its player can access this method (hasAuthority --> isOwned) attribute updated
-            if (!isOwned || !Input.GetMouseButton(1) || MainCamera == null) return;
+            if (!isOwned || MainCamera == null) return;
+            if (!(Input.GetMouseButton(1) || Input.GetMouseButton(0))) return;// allow left/right click
 
             // update on Right Mouse button pressed
             var ray = MainCamera.ScreenPointToRay(Input.mousePosition); // converts screen mouse_position to world-space ray
@@ -33,6 +32,7 @@ namespace MultiplayerBasis
             {
                 CmdMove(hit.point); // impact point on the object's collider
             }
+            //Debug.Log(hit.point);
         }
 
         #region Server
