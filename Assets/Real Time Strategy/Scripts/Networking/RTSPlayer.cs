@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 namespace RTS
@@ -59,8 +58,9 @@ namespace RTS
 
         [SerializeField] CameraController camController; public CameraController CamController => camController;
 
-        private void Awake()
+        private void Start()
         {
+            //Debug.Log(GameSession.Instance);
             GameSession.Instance.AddPlayerRef(this);
             // slightly bright colors for player team assignment
             teamColor = new Color(Random.Range(0.05f, 1f), Random.Range(0.05f, 1f), Random.Range(0.05f, 1f));
@@ -258,10 +258,11 @@ namespace RTS
             if (!(Base.connectionToClient.connectionId == connectionToClient.connectionId)) return;
             
             // ---> destroy base's buildings <---
-            foreach (Building building in myBases[Base].baseBuildings) // destroys the buildings in the base
+            var currentBaseBuildings = myBases[Base].baseBuildings;
+            for ( int i = 0; i < currentBaseBuildings.Count; i++) // destroys the buildings in the base
             {
                 // we are will be needing to call deal_damage(full health) to maintain the proper flow of gameobject destruction
-                building.HealthConfig.DealDamage(float.MaxValue); // max value to ensure that it will be dead
+                currentBaseBuildings[i].HealthConfig.DealDamage(float.MaxValue); // max value to ensure that it will be dead
             }
 
             // --->   remove base reference  <---

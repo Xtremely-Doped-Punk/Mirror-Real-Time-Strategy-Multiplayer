@@ -13,11 +13,12 @@ namespace RTS
     public class CustomNetworkManager : NetworkManager
     {
         [Header("Server Spawnable Objects")] // we are not using list here, as do not change in run time, rather array is prefered
-        [SerializeField] private PlayerBase basePrefab = null;
+        [SerializeField, Tooltip("make sure all the spawn points have identity rotation")] private PlayerBase basePrefab = null;
         [SerializeField] private Building[] buildingPrefabs = new Building[0];
         [SerializeField] private UnitBehaviour[] unitPrefabs = new UnitBehaviour[0];
         [SerializeField] private ProjectileBehaviour[] projectilePrefabs = new ProjectileBehaviour[0];
         [SerializeField] private GameSession GameSessionPrefab = null;
+        [field: SerializeField] public CameraControllerConfigurationSO CameraControllerConfigurationSO { get; set; } = null;
 
         //private Dictionary<NetworkConnection, GameObject> Organizer; // if in a editor, re-organize the game-objects of all player grouped
         /* Mirror does not support using Networked scripts on child objects:
@@ -127,9 +128,13 @@ namespace RTS
         public override void OnServerAddPlayer(NetworkConnectionToClient conn)
         {
             base.OnServerAddPlayer(conn);
+            var joinedPlayerID = conn.identity;
 
             GameObject initialBaseInstance = Instantiate(basePrefab.gameObject, 
-                conn.identity.transform.position, conn.identity.transform.rotation);
+                joinedPlayerID.transform.position, joinedPlayerID.transform.rotation);
+
+            // ignore if all spawn points have no rotation
+            //joinedPlayerID.transform.rotation = Quaternion.identity; // reset rotation of player to unaffect camera
 
             SpawnOnServer(initialBaseInstance, conn, basePrefab.name);
             // Error: Failed to spawn server object, did you forget to add it to the NetworkManager? (fixed explained above)

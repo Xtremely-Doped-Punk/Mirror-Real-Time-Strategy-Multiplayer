@@ -15,7 +15,7 @@ public class ModelColliderHandler : MonoBehaviour
     [SerializeField] private bool removeExistingParentColliders = false;
     [SerializeField] private bool generateColliders = false;
     [Tooltip("the main gameobject in which to generate the colliders")]
-    [SerializeField] private Transform colliderParent; public Transform CcolliderParent => colliderParent;
+    [SerializeField] private Transform colliderParent; public Transform ColliderParent => colliderParent;
 
 
     [SerializeField] private MeshFilter[] meshFilters;

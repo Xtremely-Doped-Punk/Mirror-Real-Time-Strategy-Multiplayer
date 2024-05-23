@@ -1,7 +1,4 @@
 using Mirror;
-using RTS;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -12,9 +9,7 @@ namespace RTS
     {
         [SerializeField] private RectTransform minimapRect = null;
         [SerializeField] private Transform mapTransform = null;
-        [SerializeField, Tooltip("As the camera is tilted at an angle from above, " +
-            "small offset required to adjust the view projected by to the point clicked resp")] 
-        private float offsetZ = 10;
+        private CameraControllerConfigurationSO ccConfigSO;
 
         private CameraController camController;
         private Transform playerCamera;
@@ -23,6 +18,7 @@ namespace RTS
 
         private void Start()
         {
+            ccConfigSO = (NetworkManager.singleton as CustomNetworkManager).CameraControllerConfigurationSO;
             mapScaleX = mapTransform.localScale.x/2;
             mapScaleZ = mapTransform.localScale.z/2; // in 3d, we are using 'xz' plane for world env
         }
@@ -73,7 +69,7 @@ namespace RTS
                 playerCamera.position.y, // y axis position of cam will remain constant
                 Mathf.Lerp(-mapScaleZ, mapScaleZ, normalizedPoint.y));
 
-            playerCamera.position = newCameraPos - new Vector3(0f, 0f, offsetZ);
+            playerCamera.position = newCameraPos - new Vector3(0f, 0f, ccConfigSO.OffsetZ);
         }
     }
 
