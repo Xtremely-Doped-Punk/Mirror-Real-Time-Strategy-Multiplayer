@@ -1,3 +1,4 @@
+using RTS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +21,10 @@ public class ModelColliderHandler : MonoBehaviour
 
     [SerializeField] private MeshFilter[] meshFilters;
     [SerializeField] private MeshRenderer[] meshRenderers;
-    [SerializeField] private List<MeshCollider> colliders;
+    [SerializeField] private List<Collider> colliders;
     public ReadOnlyArray<MeshFilter> MeshFilters => meshFilters;
     public ReadOnlyArray<MeshRenderer> MeshRenderers => meshRenderers;
-    public ReadOnlyArray<MeshCollider> Colliders => colliders.ToArray();
+    public ReadOnlyArray<Collider> Colliders => colliders.ToArray();
 
 #if UNITY_EDITOR
     public (string, MessageType) Run()
@@ -71,7 +72,7 @@ public class ModelColliderHandler : MonoBehaviour
             }
             return ("Colliders created successfully, Save the Prefab to save these changes", MessageType.Info);
         }
-        colliders = transform.GetComponentsInChildren<MeshCollider>().ToList();
+        colliders = transform.GetComponentsInChildren<Collider>().ToList();
         return ("Mesh Filters and Renderer references from the child has been pulled form childs", MessageType.None);
     }
 #endif
@@ -104,3 +105,13 @@ public class MCHEditor : Editor
     }
 }
 #endif
+
+public static class ColliderExtender
+{
+    public static Vector3 Size(this Collider collider)
+    {
+        if (collider is MeshCollider) return (collider as MeshCollider).sharedMesh.bounds.extents;
+        if (collider is BoxCollider) return (collider as BoxCollider).size;
+        return collider.bounds.extents;
+    }
+}

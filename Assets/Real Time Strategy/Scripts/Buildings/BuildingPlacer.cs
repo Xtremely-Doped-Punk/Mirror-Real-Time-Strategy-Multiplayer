@@ -42,7 +42,7 @@ namespace RTS
                 var centers = buildingColliders.Select(x => x.bounds.center);
                 avg_center = new Vector3(centers.Average(v => v.x), centers.Average(v => v.y), centers.Average(v => v.z));
                 max_extends = buildingColliders.Max(x => 
-                Vector3.Scale(x.sharedMesh.bounds.extents, x.transform.localScale) + Vector3.one * Building.BUILDING_GAP);
+                Vector3.Scale(x.Size(), x.transform.localScale) + Vector3.one * Building.BUILDING_GAP);
                 originalMaterials = modelHandler.MeshRenderers.Select(x => x.sharedMaterial).ToArray();
             }
             else

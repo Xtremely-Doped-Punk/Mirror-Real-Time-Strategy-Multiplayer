@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace RTS
 {
@@ -87,7 +88,9 @@ namespace RTS
                     */
 
                     // default shoot at target technique
-                    var diff = targetingConfig.activeTarget.AimPoint.position - projectileSpawnPoint.position;
+                    var aimPoints = targetingConfig.activeTarget.AimPoints;
+                    Transform targetAim = aimPoints[Random.Range(0, aimPoints.Length)];
+                    var diff = targetAim.position - projectileSpawnPoint.position;
                     // note: projectile rotation occurs along the y axis plane corresponding the x,z position of unit in the platform
                     var projectileRotation = Quaternion.LookRotation(diff);
 

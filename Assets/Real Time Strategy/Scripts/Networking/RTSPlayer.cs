@@ -64,6 +64,7 @@ namespace RTS
             GameSession.Instance.AddPlayerRef(this);
             // slightly bright colors for player team assignment
             teamColor = new Color(Random.Range(0.05f, 1f), Random.Range(0.05f, 1f), Random.Range(0.05f, 1f));
+            if (transform.rotation != Quaternion.identity) transform.rotation = Quaternion.identity; // reset rotation to make sure camera controller doesn't get affected
         }
 
         #region Server

@@ -10,7 +10,7 @@ namespace RTS
         [Header("Targetable Properties")]
         [Tooltip("IS (or) IS_NOT vurnerable to attacks by other targeters")]
         [SerializeField] private bool targetable = true; public bool isTargetable { get { return targetable; } }
-        [SerializeField] private Transform aimPoint = null; public Transform AimPoint { get { return aimPoint; } }
+        [SerializeField] private Transform[] aimPoints = null; public Transform[] AimPoints { get { return aimPoints; } }
 
 
         [Header("Targeter Properties")]
@@ -22,7 +22,7 @@ namespace RTS
         
         private void Start()
         {
-            if (aimPoint == null) // adding fail safe for target-aim transform incase if not set
+            if (aimPoints == null || aimPoints.Length == 0) // adding fail safe for target-aim transform incase if not set
             {
                 // create new empty obj and set its parrent under the unit prefab instance
                 GameObject AimObj = new("Aim Point");
@@ -42,7 +42,7 @@ namespace RTS
                 aim.y += height * 3 / 5; // just above the middle-height of the object
                 AimObj.transform.position = aim;
 
-                aimPoint = AimObj.transform;
+                aimPoints = new Transform[] { AimObj.transform };
             }
         }
 

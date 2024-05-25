@@ -37,6 +37,15 @@ namespace RTS
                     ""processors"": ""NormalizeVector2"",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ZoomCamera"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""cd81f05a-47f4-474c-b54c-20fdf2c12aef"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": ""Clamp(min=-1,max=1)"",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -149,6 +158,17 @@ namespace RTS
                     ""action"": ""MoveCamera"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5970ee81-473f-4b6a-b992-22bc6e6a887a"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ZoomCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -158,6 +178,7 @@ namespace RTS
             // Player
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
             m_Player_MoveCamera = m_Player.FindAction("MoveCamera", throwIfNotFound: true);
+            m_Player_ZoomCamera = m_Player.FindAction("ZoomCamera", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -220,11 +241,13 @@ namespace RTS
         private readonly InputActionMap m_Player;
         private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
         private readonly InputAction m_Player_MoveCamera;
+        private readonly InputAction m_Player_ZoomCamera;
         public struct PlayerActions
         {
             private @PlayerControls m_Wrapper;
             public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
+            public InputAction @ZoomCamera => m_Wrapper.m_Player_ZoomCamera;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -237,6 +260,9 @@ namespace RTS
                 @MoveCamera.started += instance.OnMoveCamera;
                 @MoveCamera.performed += instance.OnMoveCamera;
                 @MoveCamera.canceled += instance.OnMoveCamera;
+                @ZoomCamera.started += instance.OnZoomCamera;
+                @ZoomCamera.performed += instance.OnZoomCamera;
+                @ZoomCamera.canceled += instance.OnZoomCamera;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -244,6 +270,9 @@ namespace RTS
                 @MoveCamera.started -= instance.OnMoveCamera;
                 @MoveCamera.performed -= instance.OnMoveCamera;
                 @MoveCamera.canceled -= instance.OnMoveCamera;
+                @ZoomCamera.started -= instance.OnZoomCamera;
+                @ZoomCamera.performed -= instance.OnZoomCamera;
+                @ZoomCamera.canceled -= instance.OnZoomCamera;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -264,6 +293,7 @@ namespace RTS
         public interface IPlayerActions
         {
             void OnMoveCamera(InputAction.CallbackContext context);
+            void OnZoomCamera(InputAction.CallbackContext context);
         }
     }
 }

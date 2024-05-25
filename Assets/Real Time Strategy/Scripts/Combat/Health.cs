@@ -1,5 +1,6 @@
 using Mirror;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -83,8 +84,14 @@ namespace RTS
 
         #region UI
         [Header("UI References Needed")]
-        [SerializeField] Canvas healthBarObj;
-        [SerializeField] Image healthBarImg;
+        [SerializeField] private Canvas healthBarObj;
+        [SerializeField] private Image healthBarImg;
+        [SerializeField] private TMP_Text infoText;
+
+        public void SetInfo(string info)
+        {
+            infoText.text = info;
+        }
 
         private void HealthBarUpdation(float current, float max)
         {
@@ -95,6 +102,7 @@ namespace RTS
         {
             healthBarObj.worldCamera = Camera.main;
             healthBarObj.gameObject.SetActive(false);
+            minimapView.gameObject.SetActive(true);
             minimapRenderers = minimapView.GetComponentsInChildren<Renderer>();
         }
 
